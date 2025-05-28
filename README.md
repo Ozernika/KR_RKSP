@@ -12,31 +12,12 @@
 - PostgreSQL
 - Docker / Docker Compose
 - Lombok
-##  Структура проекта
-rksp/
-│
-├── src/
-│ ├── main/
-│ │ ├── java/com/example/rksp/
-│ │ │ ├── controller/ # REST-контроллеры (UserController и др.)
-│ │ │ ├── model/ # JPA-сущности (AuthUser и др.)
-│ │ │ ├── repository/ # Интерфейсы для работы с базой (UserRepository и др.)
-│ │ │ ├── service/ # Бизнес-логика, включая UserService (UserDetailsService)
-│ │ │ └── security/ # Конфигурация Spring Security
-│ │ └── resources/
-│ │ ├── application.properties # Конфигурация приложения (или .properties)
-│ │ └── ...
-│ └── test/ # Unit и Integration тесты
-│
-├── docker-compose.yml # PostgreSQL контейнер
-├── build.gradle # Сборка Gradle
-└── README.md # Документация проекта
-## Как запустить
-# 1. Запусти PostgreSQL
+# Как запустить
+## 1. Запусти PostgreSQL
 docker-compose up -d
 
-# 2. Собери проект
+## 2. Собери проект
 ./gradlew clean build
 
-# 3. Запусти приложение
+## 3. Запусти приложение
 ./gradlew bootRun
