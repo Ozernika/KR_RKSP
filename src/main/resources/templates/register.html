@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Регистрация</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 2rem; background: #f0f0f0; text-align: center; }
+
+        input, button { margin: 0.5rem; padding: 0.5rem; font-size: 1rem; }
+        button { cursor: pointer; background: #007BFF; color: #fff; border: none; border-radius: 4px; }
+        button:hover { background: #0056b3; }
+        footer {
+                padding: 1rem;
+            }
+    </style>
+</head>
+<body>
+<header><h1>MeetingApp</h1></header>
+<h2>Регистрация</h2>
+<input id="username" placeholder="Имя пользовател я"><br>
+<input id="password" type="password" placeholder="Пароль"><br>
+<button onclick="register()">Регистрация</button>
+<p>Уже есть аккаунт? <a href="/login/">Войти</a></p>
+
+<script>
+    async function register() {
+      const res = await fetch('http://localhost:8000/api/users/register/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          username: document.getElementById('username').value,
+          password: document.getElementById('password').value
+        })
+      });
+
+      if (res.ok) {
+        location.href = '/login/';
+      } else {
+        alert('Имя пользователя занято');
+      }
+    }
+</script>
+<footer>
+    <P> Озерная Вероника ИКБО-30-22, КР "Разработка клиент-серверных приложений" 6 семестр</p>
+</footer>
+</body>
+</html>

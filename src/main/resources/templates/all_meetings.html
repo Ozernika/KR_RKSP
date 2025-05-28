@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Все встречи</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 2rem; background: #f0f0f0; }
+        header { font-size: 1.2rem; text-align: center; }
+        ul { list-style-type: none; padding: 0; }
+        li { background: #fff; margin: 1rem 0; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button { margin-left: 10px; cursor: pointer; background: #007BFF; color: #fff; border: none; border-radius: 4px; padding: 0.3rem 0.6rem; }
+        button:hover { background: #0056b3; }
+        .description { margin-top: 5px; }
+        a { color: #007BFF; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        footer {
+                padding: 1rem;
+                text-align: center;
+            }
+    </style>
+</head>
+<body>
+<header><h1>MeetingApp</h1></header>
+<h2>Все встречи</h2>
+<ul id="meetings"></ul>
+<p><a href="/create-meeting/">Создать встречу</a></p>
+<p><a href="/my-meetings/">Мои встречи</a></p>
+
+
+<script>
+    async function loadAllMeetings() {
+      const token = localStorage.getItem('token');
+      if (!token) return location.href = '/login/';
+
+      const res = await fetch('http://localhost:8000/api/meetings/', {
+        headers: { 'Authorization': 'Token ' + token }
+      });
+
+      const meetings = await res.json();
+      const list = document.getElementById('meetings');
+      list.innerHTML = '';
+
+      meetings.forEach(m => {
+        const li = document.createElement('li');
+        const titleText = document.createElement('span');
+        titleText.textContent = `${m.title} – ${new Date(m.date).toLocaleString()}`;
+        li.appendChild(titleText);
+
+        const expandBtn = document.createElement('button');
+        expandBtn.textContent = 'Развернуть описание';
+
+        const description = document.createElement('div');
+        description.textContent = m.description;
+        description.className = 'description';
+        description.style.display = 'none';
+
+        const collapseBtn = document.createElement('button');
+        collapseBtn.textContent = 'Свернуть описание';
+        collapseBtn.style.display = 'none';
+
+        expandBtn.onclick = () => {
+          description.style.display = 'block';
+          expandBtn.style.display = 'none';
+          collapseBtn.style.display = 'inline';
+        };
+
+        collapseBtn.onclick = () => {
+          description.style.display = 'none';
+          expandBtn.style.display = 'inline';
+          collapseBtn.style.display = 'none';
+        };
+
+        const joinBtn = document.createElement('button');
+        joinBtn.textContent = 'Записаться';
+        joinBtn.style.backgroundColor = '#007BFF';
+        joinBtn.onclick = async () => {
+          const confirmJoin = confirm(`Вы уверены, что хотите записаться на "${m.title}"?`);
+          if (!confirmJoin) return;
+
+          const joinRes = await fetch('http://localhost:8000/api/meetings/' + m.id + '/join/', {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Token ' + token,
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (joinRes.ok) {
+            alert('Вы успешно записались на встречу');
+            location.href = '/my-meetings/';
+          } else {
+            const data = await joinRes.json();
+            alert('Ошибка записи: ' + JSON.stringify(data));
+          }
+        };
+
+        li.appendChild(expandBtn);
+        li.appendChild(collapseBtn);
+        li.appendChild(description);
+        li.appendChild(joinBtn);
+        list.appendChild(li);
+      });
+    }
+
+    loadAllMeetings();
+</script>
+<footer>
+    <P> Озерная Вероника ИКБО-30-22, КР "Разработка клиент-сервеных приложений" 6 семестр</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Войти</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 2rem; background: #f0f0f0; text-align: center; }
+
+        input, button { margin: 0.5rem; padding: 0.5rem; font-size: 1rem; }
+        button { cursor: pointer; background: #007BFF; color: #fff; border: none; border-radius: 4px; }
+        button:hover { background: #0056b3; }
+        footer {
+          padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+<header><h1>MeetingApp</h1></header>
+<h2>Войти</h2>
+<input id="username" placeholder="Имя пользователя"><br>
+<input id="password" type="password" placeholder="Пароль"><br>
+<button onclick="login()">Войти</button>
+<p>Нет аккаунта? <a href="/register/">Зарегистрироваться</a></p>
+
+<script>
+    async function login() {
+      const res = await fetch('http://localhost:8000/api/users/login/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          username: document.getElementById('username').value,
+          password: document.getElementById('password').value
+        })
+      });
+
+      const data = await res.json();
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        location.href = '/create-meeting/';
+      } else {
+        alert('Неудачный вход');
+      }
+    }
+</script>
+<footer>
+    <P> Озерная Вероника ИКБО-30-22, КР "Разработка клиент-серверных приложений" 6 семестр</p>
+</footer>
+</body>
+</html>

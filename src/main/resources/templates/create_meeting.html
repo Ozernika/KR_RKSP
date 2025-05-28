@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Создать встречу</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 2rem; background: #f0f0f0; text-align: center; }
+        header {font-size: 1.2rem}
+        input, textarea, button { margin: 0.5rem; padding: 0.5rem; font-size: 1rem; width: 300px; }
+        textarea { height: 100px; }
+        button { margin-left: 10px; cursor: pointer; background: #007BFF; color: #fff; border: none; border-radius: 4px; padding: 0.3rem 0.6rem; }
+        button:hover { background: #0056b3; }
+        a { color: #007BFF; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        footer {
+                padding: 1rem;
+            }
+    </style>
+</head>
+<body>
+<header><h1>MeetingApp</h1></header>
+<h2>Создать всречу</h2>
+<input id="title" placeholder="Название"><br>
+<textarea id="description" placeholder="Описание"></textarea><br>
+<input id="date" type="datetime-local"><br>
+<button onclick="createMeeting()">Создать</button>
+<p><a href="/meetings/">Все встречи</a></p>
+<p><a href="/my-meetings/">Мои встречи</a></p>
+<p><a href="/login/" onclick="logout()">Выйти</a></p>
+
+<script>
+    function getToken() {
+      return localStorage.getItem('token');
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+    }
+
+    async function createMeeting() {
+      const token = getToken();
+      if (!token) return location.href = '/login/';
+
+      const res = await fetch('http://localhost:8000/api/meetings/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Token ' + token
+        },
+        body: JSON.stringify({
+          title: document.getElementById('title').value,
+          description: document.getElementById('description').value,
+          date: document.getElementById('date').value
+        })
+      });
+
+      if (res.ok) {
+        alert('Meeting created!');
+      } else {
+        const data = await res.json();
+        alert('Error: ' + JSON.stringify(data));
+      }
+    }
+</script>
+<footer>
+    <P> Озерная Вероника ИКБО-30-22, КР "Разработка клиент-серверных приложений" 6 семестр</p>
+</footer>
+</body>
+</html>
